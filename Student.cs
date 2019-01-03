@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 
 namespace lab_01 {
-  public class Student:Person {
+  public class Student : Person, ICloneable {
 
-    private enum Education {
+    public enum Education {
       Bachelor,
       Master,
       SecondEducation,
       PhD
     }
 
-    private Education level;
-    private string group_name;
-    private int gradebook_number;
+    public Education level {get; set;}
+    public string group_name {get; set;}
+    public int gradebook_number {get; set;}
     private List<Examination> list;
 
     public Student() : base() {
@@ -25,9 +25,9 @@ namespace lab_01 {
       this.list = new List<Examination>();
     }
 
-    public Student(string name, string surname, string date_of_birth, int level,
+    public Student(string name, string surname, string date_of_birth, Education level,
       string group_name, int gradebook_number) : base(name, surname, date_of_birth){
-        this.level = (Education)(level - 1);
+        this.level = level;
         this.group_name = group_name;
         this.gradebook_number = gradebook_number;
         this.list = new List<Examination>();
@@ -42,7 +42,7 @@ namespace lab_01 {
       }
     }
 
-    public void addExams(Examination[] exams) {
+    public void AddExams(Examination[] exams) {
       foreach (Examination item in exams) this.list.Add(item);
     }
 
@@ -63,6 +63,32 @@ namespace lab_01 {
       Console.WriteLine("\nExaminations:");
       foreach (Examination exam in this.list) Console.WriteLine(exam);
       Console.WriteLine("\nAvarage rating: " + this.avarage_rating);
+    }
+
+    public object Clone() {
+
+      Student cloned = new Student(this.name, this.surname,
+        this.date_of_birth.ToShortDateString(), this.level,
+        this.group_name, this.gradebook_number);
+
+      Examination[] exams = new Examination[this.list.Count];
+      for (int i = 0; i < this.list.Count; i++){
+        exams[i] = (Examination)this.list[i].Clone();
+      }
+      cloned.AddExams(exams);
+      return cloned;
+    }
+
+    public IEnumerable<Examination> GetExamsLess(int max_point) {
+      foreach (Examination i in this.list){
+        if (i.points < max_point) yield return i;
+      }
+    }
+
+    public Examination[] GetArrayOfExams() {
+      Examination[] result = this.list.ToArray();
+      Array.Sort(result);
+      return result;
     }
   }
 }

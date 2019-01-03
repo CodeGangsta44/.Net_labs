@@ -2,7 +2,7 @@ using System;
 using System.Text;
 
 namespace lab_01 {
-  public class Examination {
+  public class Examination : ICloneable, IComparable {
     private int semester;
     private string subject;
     private string teacher;
@@ -32,8 +32,17 @@ namespace lab_01 {
       StringBuilder result = new StringBuilder();
       result.Append("\nSubject: " + this.subject + '\n');
       result.Append("Teacher: " + this.teacher.Split(' ')[0] + '\n');
+      result.Append("Semester: " + this.semester + '\n');
       result.Append("Points: " + (this.is_diff ? this.points.ToString() : "N/A" ));
       return result.ToString();
+    }
+
+    public object Clone() {
+      return new Examination(this.semester, this.subject, this.teacher, this.points, this.is_diff, this.date.ToShortDateString());
+    }
+
+    public int CompareTo(object obj) {
+      return this.semester.CompareTo(((Examination)obj).semester);
     }
   }
 }
